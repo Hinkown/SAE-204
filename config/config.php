@@ -36,30 +36,34 @@ if ($estEnLocal) {
     define('DB_NAME', 'sae203_ellusion');
     define('DB_USER', 'root');
     define('DB_PASS', '');
-    
-    // Détection automatique de l'URL du site (compatible tous environnements)
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $scriptPath = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
-    
-    // Si on est dans un sous-dossier (admin, api, etc.), remonter au dossier parent
-    if (basename($scriptPath) === 'admin' || basename($scriptPath) === 'api') {
-        $scriptPath = dirname($scriptPath);
-    }
-    
-    $scriptPath = rtrim($scriptPath, '/');
-    define('SITE_URL', $protocol . '://' . $_SERVER['HTTP_HOST'] . $scriptPath);
-    
     define('DEBUG_MODE', true);
-    
+
 } else {
     // ====== CONFIGURATION OVH (PRODUCTION) ======
     define('DB_HOST', 'ijtebowcompte16.mysql.db');
     define('DB_NAME', 'ijtebowcompte16');
     define('DB_USER', 'IJTEbow-compte16_ovh-43597');
     define('DB_PASS', 'apm8L27R2026');
-    define('SITE_URL', 'http://ijtebow.cluster024.hosting.ovh.net/compte16');
     define('DEBUG_MODE', false);  // IMPORTANT : false en production !
 }
+
+// ============================================================================
+// DÉTECTION AUTOMATIQUE DE L'URL DU SITE (LOCAL ET PRODUCTION)
+// ============================================================================
+// On déduit l'URL de base à partir du chemin réel du script exécuté.
+// Ainsi le site fonctionne quel que soit le sous-dossier d'installation,
+// que ce soit en local (/SAE203/SAE-203) ou sur OVH
+// (/compte16/SAE203_Compte16/SAE-203), sans rien coder en dur.
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$scriptPath = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+
+// Si on est dans un sous-dossier (admin, api, etc.), remonter au dossier parent
+if (basename($scriptPath) === 'admin' || basename($scriptPath) === 'api') {
+    $scriptPath = dirname($scriptPath);
+}
+
+$scriptPath = rtrim($scriptPath, '/');
+define('SITE_URL', $protocol . '://' . $_SERVER['HTTP_HOST'] . $scriptPath);
 
 define('DB_CHARSET', 'utf8mb4');
 
